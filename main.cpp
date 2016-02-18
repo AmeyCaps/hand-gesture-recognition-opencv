@@ -1,4 +1,4 @@
-#include <opencv2/imgproc/imgproc.hpp>
+#include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 
@@ -11,7 +11,7 @@ int main( int argc, const char** argv)
 
     VideoCapture cam(0);
     if(!cam.isOpened()){
-        cout<<"Error opening camera "<< endl;
+        cout<<"ERROR not opened "<< endl;
         return -1;
     }
     Mat img;
@@ -27,7 +27,7 @@ int main( int argc, const char** argv)
     while(1){
         bool b=cam.read(img);
         if(!b){
-            cout<<"Error: cannot read frame"<<endl;
+            cout<<"ERROR : cannot read"<<endl;
             return -1;
         }
         Rect roi(340,100,270,270);
@@ -41,10 +41,10 @@ int main( int argc, const char** argv)
         vector<Vec4i>hierarchy;
         findContours(img_threshold,contours,hierarchy,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_SIMPLE,Point());
         if(contours.size()>0){
-                int indexOfBiggestContour = -1;
-	            int sizeOfBiggestContour = 0;
+                size_t indexOfBiggestContour = -1;
+	            size_t sizeOfBiggestContour = 0;
 
-	            for (int i = 0; i < contours.size(); i++){
+	            for (size_t i = 0; i < contours.size(); i++){
 		           if(contours[i].size() > sizeOfBiggestContour){
 			       sizeOfBiggestContour = contours[i].size();
 			       indexOfBiggestContour = i;
@@ -58,21 +58,21 @@ int main( int argc, const char** argv)
                 Point2f rect_point[4];
                 vector<RotatedRect>minRect(contours.size());
                 vector<Rect> boundRect(contours.size());
-                for(int i=0;i<contours.size();i++){
+                for(size_t i=0;i<contours.size();i++){
                     if(contourArea(contours[i])>5000){
                         convexHull(contours[i],hull[i],true);
                         convexityDefects(contours[i],hull[i],defects[i]);
                         if(indexOfBiggestContour==i){
                             minRect[i]=minAreaRect(contours[i]);
-                            for(int k=0;k<hull[i].size();k++){
+                            for(size_t k=0;k<hull[i].size();k++){
                                 int ind=hull[i][k];
                                 hullPoint[i].push_back(contours[i][ind]);
                             }
                             count =0;
 
-                            for(int k=0;k<defects[i].size();k++){
+                            for(size_t k=0;k<defects[i].size();k++){
                                 if(defects[i][k][3]>13*256){
-                                    int p_start=defects[i][k][0];
+                                 /*   int p_start=defects[i][k][0];   */
                                     int p_end=defects[i][k][1];
                                     int p_far=defects[i][k][2];
                                     defectPoint[i].push_back(contours[i][p_far]);
@@ -103,7 +103,7 @@ int main( int argc, const char** argv)
                             boundRect[i]=boundingRect(contours_poly[i]);
                             rectangle(img_roi,boundRect[i].tl(),boundRect[i].br(),Scalar(255,0,0),2,8,0);
                             minRect[i].points(rect_point);
-                            for(int k=0;k<4;k++){
+                            for(size_t k=0;k<4;k++){
                                 line(img_roi,rect_point[k],rect_point[(k+1)%4],Scalar(0,255,0),2,8);
                             }
 
@@ -125,4 +125,5 @@ int main( int argc, const char** argv)
 
      return 0;
 }
+
 

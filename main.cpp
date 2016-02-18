@@ -11,7 +11,7 @@ int main( int argc, const char** argv)
 
     VideoCapture cam(0);
     if(!cam.isOpened()){
-        cout<<"ERROR not opened "<< endl;
+        cout<<"Error opening camera "<< endl;
         return -1;
     }
     Mat img;
@@ -27,7 +27,7 @@ int main( int argc, const char** argv)
     while(1){
         bool b=cam.read(img);
         if(!b){
-            cout<<"ERROR : cannot read"<<endl;
+            cout<<"Error: cannot read frame"<<endl;
             return -1;
         }
         Rect roi(340,100,270,270);
